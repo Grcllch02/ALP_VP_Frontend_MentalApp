@@ -1,0 +1,14 @@
+CREATE TABLE
+    kategori_task (
+        kategori_id SERIAL PRIMARY KEY,
+        nama_kategori TEXT NOT NULL
+    );
+
+CREATE TABLE
+    task (
+        task_id SERIAL PRIMARY KEY,
+        nama_task TEXT NOT NULL,
+        deadline DATE,
+        duration INTEGER,
+        kategori_id INTEGER REFERENCES kategori_task (kategori_id)
+    );

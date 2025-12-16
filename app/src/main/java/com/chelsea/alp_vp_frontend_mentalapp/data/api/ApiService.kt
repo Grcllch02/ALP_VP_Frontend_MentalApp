@@ -5,7 +5,6 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
-    
     @GET("health")
     suspend fun getHealth(): Response<HealthResponse>
     
@@ -26,7 +25,11 @@ interface ApiService {
         @Path("id") id: Int,
         @Body request: UpdateGameStateRequest
     ): Response<GameStateDto>
-    
+
+    @GET("todos")
+    suspend fun getTodos(): Response<List<TodoDto>>
+
+
     @DELETE("game-states/{id}")
     suspend fun deleteGameState(@Path("id") id: Int): Response<Unit>
     
