@@ -38,7 +38,7 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chelsea.alp_vp_frontend_mentalapp.game.GameColors
 import com.chelsea.alp_vp_frontend_mentalapp.game.GameViewModel
-import com.chelsea.alp_vp_frontend_mentalapp.game.GameRepository
+import com.chelsea.alp_vp_frontend_mentalapp.data.repository.GameRepository
 import kotlin.math.roundToInt
 
 @Composable

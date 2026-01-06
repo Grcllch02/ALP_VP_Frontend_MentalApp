@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -28,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chelsea.alp_vp_frontend_mentalapp.ui.auth.AuthViewModel
 import com.chelsea.alp_vp_frontend_mentalapp.ui.auth.LoginScreen
 import com.chelsea.alp_vp_frontend_mentalapp.ui.auth.RegisterScreen
+import com.chelsea.alp_vp_frontend_mentalapp.ui.focus.FocusScreen
 import com.chelsea.alp_vp_frontend_mentalapp.ui.screens.GameScreen
 import com.chelsea.alp_vp_frontend_mentalapp.ui.screens.SettingsScreen
 import com.chelsea.alp_vp_frontend_mentalapp.ui.theme.ALP_VP_Frontend_MentalAppTheme
@@ -84,7 +87,7 @@ fun MainApp() {
                 modifier = Modifier.fillMaxSize(),
                 bottomBar = {
                     NavigationBar {
-                        // Left section
+                        // Todo
                         NavigationBarItem(
                             icon = { Icon(Icons.Default.Home, contentDescription = "Todo List") },
                             label = { Text("Todo") },
@@ -92,22 +95,31 @@ fun MainApp() {
                             onClick = { selectedTab.intValue = 0 }
                         )
 
-                        // Middle section - Game
+                        // Focus (BARU)
                         NavigationBarItem(
-                            icon = { Icon(Icons.Default.Home, contentDescription = "BlockBlast Game") },
-                            label = { Text("Game") },
+                            icon = { Icon(Icons.Default.Timer, contentDescription = "Focus Timer") },
+                            label = { Text("Timer") },
                             selected = selectedTab.intValue == 1,
                             onClick = { selectedTab.intValue = 1 }
                         )
 
-                        // Right section
+                        // Game
                         NavigationBarItem(
-                            icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
-                            label = { Text("Settings") },
+                            icon = { Icon(Icons.Default.Home, contentDescription = "BlockBlast Game") },
+                            label = { Text("Game") },
                             selected = selectedTab.intValue == 2,
                             onClick = { selectedTab.intValue = 2 }
                         )
+
+                        // Settings
+                        NavigationBarItem(
+                            icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+                            label = { Text("Settings") },
+                            selected = selectedTab.intValue == 3,
+                            onClick = { selectedTab.intValue = 3 }
+                        )
                     }
+
                 }
             ) { innerPadding ->
                 Box(
@@ -118,8 +130,9 @@ fun MainApp() {
                 ) {
                     when (selectedTab.intValue) {
                         0 -> PlaceholderScreen("Todo List")
-                        1 -> GameScreen(userId = authViewModel.currentUser.value?.id)
-                        2 -> SettingsScreen(
+                        1 -> FocusScreen()
+                        2 -> GameScreen(userId = authViewModel.currentUser.value?.id)
+                        3 -> SettingsScreen(
                             authViewModel = authViewModel,
                             onNavigateToLogin = { showLoginScreen = true },
                             onNavigateToRegister = { showRegisterScreen = true }
