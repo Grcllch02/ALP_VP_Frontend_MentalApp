@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,33 +26,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.Divider
+import kotlinx.coroutines.flow.update
 
 
 @Composable
 fun FocusScreen(
-    viewModel: FocusViewModel = viewModel()
+    viewModel: FocusViewModel
 ) {
+    // ⬇️ PENTING: Collect state di AWAL, sebelum remember variables
+    val state by viewModel.uiState.collectAsState()
+
     var selectedCategory by remember { mutableStateOf(MusicCategory.FOCUS) }
     var currentMusic by remember { mutableStateOf("Deep Focus") }
     var isMusicPlaying by remember { mutableStateOf(false) }
-    val state by viewModel.uiState.collectAsState()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF1A1A2E))
     ) {
+        val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(16.dp)
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-
-            // ======================
-            // TOP SECTION (TITLE)
-            // ======================
+            // TOP SECTION
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -72,9 +76,7 @@ fun FocusScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // ======================
-                // TIMER + PRESET SECTION
-                // ======================
+                // TIMER SECTION
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -85,21 +87,18 @@ fun FocusScreen(
                         .padding(vertical = 24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
-                    // TIMER
+                    // TIMER DISPLAY
                     Text(
                         text = formatTime(state.remainingSeconds),
                         fontSize = 56.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
-
-//                    Spacer(modifier = Modifier.height(16.dp))
                 }
-                Column (
-                    modifier = Modifier
-                        .padding(top = 15.dp)
-                ){
+
+                Column(
+                    modifier = Modifier.padding(top = 15.dp)
+                ) {
                     // PRESET BUTTONS
                     Row(
                         modifier = Modifier
@@ -109,10 +108,14 @@ fun FocusScreen(
                     ) {
                         listOf(15, 25, 45).forEach { minute ->
                             Button(
-                                onClick = { viewModel.setMinutes(minute) },
+                                onClick = {
+                                    viewModel.setMinutes(minute)
+                                },
+                                enabled = !state.isRunning,  // ← Disable saat timer running
                                 shape = RoundedCornerShape(12.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFF0F4C75)
+                                    containerColor = Color(0xFF0F4C75),
+                                    disabledContainerColor = Color(0xFF0F4C75).copy(alpha = 0.5f)
                                 )
                             ) {
                                 Text(
@@ -122,6 +125,8 @@ fun FocusScreen(
                             }
                         }
                     }
+
+                    // START/PAUSE BUTTON
                     Button(
                         onClick = {
                             if (state.isRunning) {
@@ -130,12 +135,13 @@ fun FocusScreen(
                                 viewModel.startTimer()
                             }
                         },
+                        enabled = state.remainingSeconds > 0,  // ← Disable jika waktu 0
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp)
-                        ,
+                            .height(56.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF0F4C75)
+                            containerColor = Color(0xFF0F4C75),
+                            disabledContainerColor = Color(0xFF0F4C75).copy(alpha = 0.5f)
                         ),
                         shape = RoundedCornerShape(14.dp)
                     ) {
@@ -147,6 +153,8 @@ fun FocusScreen(
                     }
                 }
 
+                Spacer(modifier = Modifier.height(24.dp))
+
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -157,10 +165,10 @@ fun FocusScreen(
 
                 Spacer(modifier = Modifier.height(22.dp))
 
+                // MUSIC SECTION (tetap sama)
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = "Music",
@@ -282,12 +290,11 @@ fun FocusScreen(
                     }
                 }
             }
-
         }
-
     }
 }
 
+// Rest of code tetap sama
 data class MusicItem(
     val title: String,
     val category: MusicCategory
@@ -305,9 +312,6 @@ val dummyMusicList = listOf(
     MusicItem("Night Calm", MusicCategory.SLEEP),
 )
 
-/**
- * Format time mm:ss
- */
 private fun formatTime(seconds: Int): String {
     val minutes = seconds / 60
     val remaining = seconds % 60

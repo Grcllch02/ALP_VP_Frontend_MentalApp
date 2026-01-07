@@ -4,3 +4,4 @@ data class FocusUiState(
     val remainingSeconds: Int = 0,
     val isRunning: Boolean = false
 )
+
