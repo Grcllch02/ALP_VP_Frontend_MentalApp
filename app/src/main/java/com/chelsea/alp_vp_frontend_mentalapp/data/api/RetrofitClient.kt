@@ -9,10 +9,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    
-    // Use 10.0.2.2 for Android emulator to access host machine's localhost
-    // Use your computer's IP address for physical device (e.g., "http://192.168.1.100:3000/")
-    private const val BASE_URL = "http://10.0.2.2:3000/"
+
+    private const val BASE_URL = "http://10.0.2.2:3000/api/"
     
     private val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())

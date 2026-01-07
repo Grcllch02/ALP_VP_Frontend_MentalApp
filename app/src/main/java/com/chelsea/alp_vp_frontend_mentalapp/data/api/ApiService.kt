@@ -62,12 +62,12 @@ interface ApiService {
     // AUTH
     // =======================
 
-    @POST("auth/login")
+    @POST("login")
     suspend fun login(
         @Body request: LoginRequest
     ): Response<AuthResponse>
 
-    @POST("auth/register")
+    @POST("register")
     suspend fun register(
         @Body request: RegisterRequest
     ): Response<AuthResponse>
