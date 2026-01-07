@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -28,6 +30,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chelsea.alp_vp_frontend_mentalapp.ui.auth.AuthViewModel
 import com.chelsea.alp_vp_frontend_mentalapp.ui.auth.LoginScreen
 import com.chelsea.alp_vp_frontend_mentalapp.ui.auth.RegisterScreen
+import com.chelsea.alp_vp_frontend_mentalapp.ui.focus.FocusScreen
+import com.chelsea.alp_vp_frontend_mentalapp.ui.focus.FocusViewModel  // ← Import ini
 import com.chelsea.alp_vp_frontend_mentalapp.ui.screens.GameScreen
 import com.chelsea.alp_vp_frontend_mentalapp.ui.screens.SettingsScreen
 import com.chelsea.alp_vp_frontend_mentalapp.ui.theme.ALP_VP_Frontend_MentalAppTheme
@@ -46,19 +50,20 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainApp() {
-    val selectedTab = remember { mutableIntStateOf(1) } // Default to middle tab (game)
+    val selectedTab = remember { mutableIntStateOf(1) }
     val authViewModel: AuthViewModel = viewModel()
+    val focusViewModel: FocusViewModel = viewModel()  // ← TAMBAHKAN INI
+
     var showLoginScreen by remember { mutableStateOf(false) }
     var showRegisterScreen by remember { mutableStateOf(false) }
 
-    // Show login or register screen if navigating from settings
     when {
         showLoginScreen -> {
             LoginScreen(
                 authViewModel = authViewModel,
                 onLoginSuccess = {
                     showLoginScreen = false
-                    selectedTab.intValue = 2 // Go back to settings
+                    selectedTab.intValue = 2
                 },
                 onNavigateToRegister = {
                     showLoginScreen = false
@@ -71,7 +76,7 @@ fun MainApp() {
                 authViewModel = authViewModel,
                 onRegisterSuccess = {
                     showRegisterScreen = false
-                    selectedTab.intValue = 2 // Go back to settings
+                    selectedTab.intValue = 2
                 },
                 onNavigateToLogin = {
                     showRegisterScreen = false
@@ -84,7 +89,6 @@ fun MainApp() {
                 modifier = Modifier.fillMaxSize(),
                 bottomBar = {
                     NavigationBar {
-                        // Left section
                         NavigationBarItem(
                             icon = { Icon(Icons.Default.Home, contentDescription = "Todo List") },
                             label = { Text("Todo") },
@@ -92,20 +96,25 @@ fun MainApp() {
                             onClick = { selectedTab.intValue = 0 }
                         )
 
-                        // Middle section - Game
                         NavigationBarItem(
-                            icon = { Icon(Icons.Default.Home, contentDescription = "BlockBlast Game") },
-                            label = { Text("Game") },
+                            icon = { Icon(Icons.Default.Timer, contentDescription = "Focus Timer") },
+                            label = { Text("Timer") },
                             selected = selectedTab.intValue == 1,
                             onClick = { selectedTab.intValue = 1 }
                         )
 
-                        // Right section
+                        NavigationBarItem(
+                            icon = { Icon(Icons.Default.Home, contentDescription = "BlockBlast Game") },
+                            label = { Text("Game") },
+                            selected = selectedTab.intValue == 2,
+                            onClick = { selectedTab.intValue = 2 }
+                        )
+
                         NavigationBarItem(
                             icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
                             label = { Text("Settings") },
-                            selected = selectedTab.intValue == 2,
-                            onClick = { selectedTab.intValue = 2 }
+                            selected = selectedTab.intValue == 3,
+                            onClick = { selectedTab.intValue = 3 }
                         )
                     }
                 }
@@ -118,8 +127,9 @@ fun MainApp() {
                 ) {
                     when (selectedTab.intValue) {
                         0 -> PlaceholderScreen("Todo List")
-                        1 -> GameScreen(userId = authViewModel.currentUser.value?.id)
-                        2 -> SettingsScreen(
+                        1 -> FocusScreen(viewModel = focusViewModel)  // ← Pass ViewModel
+                        2 -> GameScreen(userId = authViewModel.currentUser.value?.id)
+                        3 -> SettingsScreen(
                             authViewModel = authViewModel,
                             onNavigateToLogin = { showLoginScreen = true },
                             onNavigateToRegister = { showRegisterScreen = true }
