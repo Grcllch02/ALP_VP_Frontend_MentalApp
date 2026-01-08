@@ -71,4 +71,23 @@ interface ApiService {
     suspend fun register(
         @Body request: RegisterRequest
     ): Response<AuthResponse>
+
+    @GET("todos")
+    suspend fun getAllTodos(): Response<List<TodoDto>>
+
+    @POST("todos")
+    suspend fun createTodo(
+        @Body request: CreateTodoRequest
+    ): Response<TodoDto>
+
+    @PUT("todos/{id}")
+    suspend fun updateTodo(
+        @Path("id") todoId: Int,
+        @Body request: UpdateTodoRequest
+    ): Response<TodoDto>
+
+    @DELETE("todos/{id}")
+    suspend fun deleteTodo(
+        @Path("id") todoId: Int
+    ): Response<Unit>
 }
