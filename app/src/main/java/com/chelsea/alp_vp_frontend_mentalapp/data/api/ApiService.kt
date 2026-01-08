@@ -53,7 +53,7 @@ interface ApiService {
         @Body request: UpdateGameStateRequest
     ): Response<GameStateDto>
 
-    @DELETE("game-states/{id}")
+ +++   @DELETE("game-states/{id}")
     suspend fun deleteGameState(
         @Path("id") id: Int
     ): Response<Unit>
